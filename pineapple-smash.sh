@@ -7,6 +7,8 @@
 # Screen Maintanance
 clear
 
+
+
 # Pineapple Smash Banner
 echo -e "\e[1;33m  _____ _                              _     \e[0m \e[1;31m    _____                     _     \e[0m";
 echo -e "\e[1;33m |  __ (_)                            | |     \e[0m \e[1;31m  / ____|                   | |    \e[0m";
@@ -19,7 +21,7 @@ echo -e "\e[1;33m                          |_|   |_| \e[0m 						               
 echo
 
 # Define Variables
-break="===================================================="
+break="========================================================================================="
 
 # Pineapple Smash Control Setup
 echo "Welcome to Pineapple Smash!"
@@ -30,17 +32,44 @@ echo
 echo "To start you must provide Pineapple Smash with a control SSID that will be used to compare"
 echo "to the APs that are currently available within your location"
 echo
-echo $break
+echo -e "\e[1;34m$break\e[0m"
 echo
 echo -n "What is your control SSID?: "
 read control
 echo
-echo $break
+echo -e "\e[1;34m$break\e[0m"
 echo -e "The control value you selected is : \e[1;31m$control\e[0m"
 echo
 read -s -n 1 -p "Press any key to continue..."
 echo
-echo $break
+
+# Info Logging
+echo
+echo "Gathering information about your current wireless connection."
+echo
+sleep 1
+
+current_net="$(nmcli dev wifi | grep yes | awk '{print $1}' | cut -d "'" -f2)"
+current_singal="$(nmcli dev wifi | grep yes | awk '{print $8}')"
+current_bssid="$(nmcli dev wifi | grep yes | awk '{print $2}')"
+
+#Display Current Wirelesss Connection Details
+echo "Current Wireless Connection Details"
+echo
+echo -e "\e[1;34m$break\e[0m"
+echo
+echo -e "You are currently connected to BSSID: \e[1;31m$current_bssid\e[0m"
+echo
+echo -e "Your control Signal Strength is: \e[1;31m$current_singal\e[0m"
+echo
+echo -e "You are currently connected to a wireless network with the SSID: \e[1;31m$current_net\e[0m"
+echo
+echo -e "\e[1;34m$break\e[0m"
+sleep 3
+
+# Airwave testing
+echo
+
 if nmcli -t -field ssid dev wifi list | grep "$control" >> /dev/null
 	then
 	zenity --question --title="Pineapple Smash" --text "WARNING: A rogue access point running karma is nearby. Would you disable wireless now?"
@@ -58,17 +87,15 @@ if nmcli -t -field ssid dev wifi list | grep "$control" >> /dev/null
 		fi
 	fi
 else
-	clear
 	echo -e "\e[1;34mYour control was not found in your area.\e[0m"
 	echo
 	sleep 1
-	echo $break
+	echo -e "\e[1;34m$break\e[0m"
 	echo "Process is now terminating..."
 	sleep 2
-	clear
+	echo
 	echo "Goodbye!"
 	sleep 1
-	clear
 	exit
 fi
 
